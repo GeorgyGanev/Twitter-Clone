@@ -32,6 +32,10 @@ class HomeViewController: UIViewController {
         timelineTableView.frame = view.frame
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        navigationController?.navigationBar.isHidden = false
+    }
+    
     private func configureNavigationBar() {
        
         let imageSize: CGFloat = 36
@@ -68,6 +72,8 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
         cell.delegate = self
         return cell
     }
+    
+    
 }
 
 
