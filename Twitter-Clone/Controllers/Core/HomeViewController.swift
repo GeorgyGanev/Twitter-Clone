@@ -6,8 +6,14 @@
 //
 
 import UIKit
+import FirebaseAuth
+import Combine
 
 class HomeViewController: UIViewController {
+    
+    private var viewModel = HomeViewViewModel()
+    
+    private var subscriptions: Set<AnyCancellable> = []
     
     private let timelineTableView: UITableView = {
        let tableView = UITableView()
@@ -22,9 +28,14 @@ class HomeViewController: UIViewController {
         timelineTableView.delegate = self
         
         view.backgroundColor = .systemBackground
+        navigationController?.navigationBar.topItem?.rightBarButtonItem = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(didTapLogoutButton))
+        navigationItem.rightBarButtonItem?.tintColor = .link
         
         view.addSubview(timelineTableView)
         configureNavigationBar()
+        
+        bindViews()
+        
     }
     
     override func viewDidLayoutSubviews() {
@@ -34,6 +45,32 @@ class HomeViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.navigationBar.isHidden = false
+        handleAuthentication()
+        viewModel.retrieveUser()
+        
+    }
+    
+    private func bindViews() {
+        viewModel.$user.sink { [weak self] user in
+            guard let user = user else {return}
+            if !user.isUserOnboarded {
+                self?.completeUserOnboarding()
+            }
+        }
+        .store(in: &subscriptions)
+    }
+    
+    private func completeUserOnboarding() {
+        let vc = ProfileDataFormViewController()
+        present(vc, animated: true)
+    }
+    
+    private func handleAuthentication() {
+        if Auth.auth().currentUser == nil {
+            let vc = UINavigationController(rootViewController: OnboardingViewController())
+            vc.modalPresentationStyle = .fullScreen
+            present(vc, animated: false)
+        }
     }
     
     private func configureNavigationBar() {
@@ -52,6 +89,11 @@ class HomeViewController: UIViewController {
         
         navigationController?.navigationBar.tintColor = .label
     
+    }
+    
+    @objc private func didTapLogoutButton() {
+        try? Auth.auth().signOut()
+        handleAuthentication()
     }
     
     @objc private func didTapProfile() {
