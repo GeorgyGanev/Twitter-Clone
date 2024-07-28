@@ -7,8 +7,13 @@
 
 import UIKit
 import PhotosUI
+import Combine
 
 class ProfileDataFormViewController: UIViewController {
+    
+    private let viewModel = ProfileDataFormViewViewModel()
+    
+    private var subscriptions: Set<AnyCancellable> = []
     
     private let scrollView: UIScrollView = {
        let scrollView = UIScrollView()
@@ -115,7 +120,37 @@ class ProfileDataFormViewController: UIViewController {
         configureConstraints()
         
         avatarPlaceholderImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapToSelectPhoto)))
+        submitButton.addTarget(self, action: #selector(didTapSubmit), for: .touchUpInside)
+        bindViews()
+    }
+    
+    private func bindViews() {
+        displayNameTextField.addTarget(self, action: #selector(didUpdateDisplayName), for: .editingChanged)
+        usernameTextField.addTarget(self, action: #selector(didUpdateUsername), for: .editingChanged)
         
+        viewModel.$isFormValid.sink { [weak self] state in
+            self?.submitButton.isEnabled = state
+        }
+        .store(in: &subscriptions)
+        
+        viewModel.$isOnboardingFinished.sink { [weak self] success in
+            self?.dismiss(animated: true)
+        }
+        .store(in: &subscriptions)
+    }
+    
+    @objc private func didTapSubmit() {
+        viewModel.uploadAvatar()
+    }
+    
+    @objc private func didUpdateUsername() {
+        viewModel.username = usernameTextField.text
+        viewModel.validateUserProfileForm()
+    }
+    
+    @objc private func didUpdateDisplayName() {
+        viewModel.displayName = displayNameTextField.text
+        viewModel.validateUserProfileForm()
     }
     
     @objc private func didTapToDismiss() {
@@ -221,6 +256,11 @@ extension ProfileDataFormViewController: UITextFieldDelegate, UITextViewDelegate
     func textFieldDidEndEditing(_ textField: UITextField) {
         scrollView.setContentOffset(.init(x: 0, y: 0), animated: true)
     }
+    
+    func textViewDidChange(_ textView: UITextView) {
+        viewModel.bio = textView.text
+        viewModel.validateUserProfileForm()
+    }
 }
 
 extension ProfileDataFormViewController: PHPickerViewControllerDelegate {
@@ -234,6 +274,8 @@ extension ProfileDataFormViewController: PHPickerViewControllerDelegate {
                     DispatchQueue.main.async {
                         self?.avatarPlaceholderImageView.contentMode = .scaleAspectFill
                         self?.avatarPlaceholderImageView.image = image
+                        self?.viewModel.imageData = image
+                        self?.viewModel.validateUserProfileForm()
                     }
                 }
             }
