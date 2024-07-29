@@ -35,7 +35,7 @@ class ProfileTableViewHeader: UIView {
     private let indicator: UIView = {
        let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = UIColor(red: 29/255, green: 161/255, blue: 242/255, alpha: 1)
+        view.backgroundColor = .twitterBlueColor 
         return view
     }()
     
@@ -74,7 +74,7 @@ class ProfileTableViewHeader: UIView {
         return stackView
     }()
     
-    private let profileHeaderImageView: UIImageView = {
+    var profileHeaderImageView: UIImageView = {
        let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
@@ -84,41 +84,36 @@ class ProfileTableViewHeader: UIView {
         return imageView
     }()
     
-    private let profileAvatarImageView: UIImageView = {
+    var profileAvatarImageView: UIImageView = {
        let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.clipsToBounds = true
-        imageView.backgroundColor = .yellow
         imageView.layer.cornerRadius = 40
         imageView.contentMode = .scaleAspectFill
-        imageView.image = UIImage(systemName: "person")
         return imageView
     }()
 
-    private let displayNameLabel: UILabel = {
+    var displayNameLabel: UILabel = {
        let label = UILabel()
         label.font = .systemFont(ofSize: 22, weight: .bold)
-        label.text = "Georgy"
         label.textColor = .label
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
-    private let usernameLabel: UILabel = {
+    var usernameLabel: UILabel = {
        let label = UILabel()
         label.font = .systemFont(ofSize: 18, weight: .regular)
-        label.text = "@joro12"
         label.textColor = .secondaryLabel
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
-    private let userBioLabel: UILabel = {
+    var userBioLabel: UILabel = {
        let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 3
         label.textColor = .label
-        label.text = "iOS Developer"
         return label
     }()
     
@@ -130,18 +125,16 @@ class ProfileTableViewHeader: UIView {
         return imageView
     }()
     
-    private let joinDateLabel: UILabel = {
+    var joinDateLabel: UILabel = {
        let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .systemFont(ofSize: 14, weight: .regular)
         label.textColor = .secondaryLabel
-        label.text = "Joined May 2023"
         return label
     }()
     
-    private let followingCountLabel: UILabel = {
+    var followingCountLabel: UILabel = {
        let label = UILabel()
-        label.text = "315"
         label.font = .systemFont(ofSize: 14, weight: .bold)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .label
@@ -157,9 +150,8 @@ class ProfileTableViewHeader: UIView {
         return label
     }()
     
-    private let followersCountLabel: UILabel = {
+    var followersCountLabel: UILabel = {
        let label = UILabel()
-        label.text = "20345"
         label.font = .systemFont(ofSize: 14, weight: .bold)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .label
