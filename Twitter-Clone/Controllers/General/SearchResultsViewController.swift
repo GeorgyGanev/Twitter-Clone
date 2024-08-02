@@ -70,6 +70,11 @@ extension SearchResultsViewController: UITableViewDataSource, UITableViewDelegat
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        
+        let user = users[indexPath.row]
+        let profileViewModel = ProfileViewViewModel(user: user)
+        let vc = ProfileViewController(viewModel: profileViewModel)
+        present(vc, animated: true)
     }
     
 }

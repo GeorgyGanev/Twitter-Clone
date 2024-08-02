@@ -65,13 +65,12 @@ class ProfileViewController: UIViewController {
         
         bindViews()
         
-        viewModel.retrieveUser()
+        viewModel.fetchUserTweets()
     }
         
     private func bindViews() {
         viewModel.$user.sink { [weak self] user in
-            guard let user = user else { return }
-            
+         
             self?.headerView.displayNameLabel.text = user.displayName
             self?.headerView.usernameLabel.text = "@\(user.username)"
             self?.headerView.followersCountLabel.text = "\(user.followersCount)"
