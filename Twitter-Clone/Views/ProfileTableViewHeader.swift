@@ -167,6 +167,17 @@ class ProfileTableViewHeader: UIView {
         return label
     }()
     
+    private let followButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.backgroundColor = .twitterBlueColor
+        button.setTitleColor(.white, for: .normal)
+        button.setTitle("Follow", for: .normal)
+        button.clipsToBounds = true
+        button.layer.cornerRadius = 20
+        return button
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -182,10 +193,12 @@ class ProfileTableViewHeader: UIView {
         addSubview(followersCountLabel)
         addSubview(followersTextLabel)
         addSubview(sectionStack)
+        addSubview(followButton)
         addSubview(indicator)
         
         configureConstraints()
         configureStackButton()
+        
     }
     
     private func configureStackButton() {
@@ -200,6 +213,21 @@ class ProfileTableViewHeader: UIView {
             
             button.addTarget(self, action: #selector(didTapTab), for: .touchUpInside)
         }
+    }
+    
+    private func configureButtonAsUnfollow() {
+        followButton.backgroundColor = .systemBackground
+        followButton.setTitle("Unfollow", for: .normal)
+        followButton.layer.borderWidth = 2
+        followButton.layer.borderColor = UIColor.twitterBlueColor.cgColor
+        followButton.setTitleColor(.twitterBlueColor, for: .normal)
+    }
+    
+    private func configureButtonAsFollow() {
+        followButton.setTitle("Follow", for: .normal)
+        followButton.layer.borderColor = UIColor(.clear).cgColor
+        followButton.backgroundColor = .twitterBlueColor
+        followButton.setTitleColor(.white, for: .normal)
     }
     
     @objc private func didTapTab(_ sender: UIButton) {
@@ -302,8 +330,15 @@ class ProfileTableViewHeader: UIView {
         let indicatorConstraints = [
             leadingAncors[0],
             trailingAncors[0],
-            indicator.topAnchor.constraint(equalTo: sectionStack.arrangedSubviews[0].bottomAnchor),
+            indicator.topAnchor.constraint(equalTo: sectionStack.bottomAnchor, constant: -4),
             indicator.heightAnchor.constraint(equalToConstant: 4)
+        ]
+        
+        let followButtonConstraints = [
+            followButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            followButton.centerYAnchor.constraint(equalTo: usernameLabel.centerYAnchor),
+            followButton.widthAnchor.constraint(equalToConstant: 90),
+            followButton.heightAnchor.constraint(equalToConstant: 40)
         ]
         
         NSLayoutConstraint.activate(profileHeaderImageViewConstraints)
@@ -319,6 +354,7 @@ class ProfileTableViewHeader: UIView {
         NSLayoutConstraint.activate(followersTextLabelConstraints)
         NSLayoutConstraint.activate(sectionStackConstraints)
         NSLayoutConstraint.activate(indicatorConstraints)
+        NSLayoutConstraint.activate(followButtonConstraints)
     }
     
     

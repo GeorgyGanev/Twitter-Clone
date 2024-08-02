@@ -44,10 +44,34 @@ class DatabaseManager {
             .eraseToAnyPublisher()
     }
     
+    func collectionUsers(search query: String) -> AnyPublisher<[TwitterUser], Error> {
+        db.collection(usersPath).whereField("username", isEqualTo: query)
+            .getDocuments()
+            .map(\.documents)
+            .tryMap { snapshots in
+                try snapshots.map {
+                    try $0.data(as: TwitterUser.self)
+                }
+            }
+            .eraseToAnyPublisher()
+    }
+    
     func collecionTweets(dispatch tweet: Tweet) -> AnyPublisher<Bool, Error> {
         db.collection(tweetsPath).document(tweet.id).setData(from: tweet)
             .map { _ in
                 return true
+            }
+            .eraseToAnyPublisher()
+    }
+    
+    func collectionTweets(retrieveTweetsFor userId: String) -> AnyPublisher<[Tweet], Error>  {
+        db.collection(tweetsPath).whereField("authorId", isEqualTo: userId)
+            .getDocuments()
+            .tryMap(\.documents)
+            .tryMap { snapshots in
+                try snapshots.map {
+                   try $0.data(as: Tweet.self)
+                }
             }
             .eraseToAnyPublisher()
     }

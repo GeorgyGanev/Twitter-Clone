@@ -7,9 +7,10 @@
 
 import Foundation
 
-struct Tweet: Identifiable, Encodable {
-    let id = UUID().uuidString
+struct Tweet: Identifiable, Codable {
+    var id = UUID().uuidString
     let author: TwitterUser
+    let authorId: String
     let tweetContent: String
     var likesCount: Int
     var likers: [String]

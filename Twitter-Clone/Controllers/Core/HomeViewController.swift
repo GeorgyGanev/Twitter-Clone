@@ -76,6 +76,13 @@ class HomeViewController: UIViewController {
             }
         }
         .store(in: &subscriptions)
+        
+        viewModel.$tweets.sink { [weak self] _ in
+            DispatchQueue.main.async {
+                self?.timelineTableView.reloadData()
+            }
+        }
+        .store(in: &subscriptions)
     }
     
     private func configureConstraints() {
@@ -133,7 +140,8 @@ class HomeViewController: UIViewController {
     }
     
     @objc private func didTapProfile() {
-        let vc = ProfileViewController()
+        let profileVM = ProfileViewViewModel()
+        let vc = ProfileViewController(viewModel: profileVM)
         navigationController?.pushViewController(vc, animated: true)
     }
 }
@@ -141,13 +149,20 @@ class HomeViewController: UIViewController {
 extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        10
+        return viewModel.tweets.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: TweetTableViewCell.identifier, for: indexPath) as? TweetTableViewCell else {return UITableViewCell()}
         
         cell.delegate = self
+        
+        let tweetModel = viewModel.tweets[indexPath.row]
+        cell.configureTweetCell(username: tweetModel.author.username,
+                                displayName: tweetModel.author.displayName,
+                                tweetContent: tweetModel.tweetContent,
+                                avatarPath: tweetModel.author.avatarPath)
+        
         return cell
     }
     

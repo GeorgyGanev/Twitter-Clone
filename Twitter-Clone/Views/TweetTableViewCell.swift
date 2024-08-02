@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SDWebImage
 
 protocol TweetTableViewCellDelegate: AnyObject {
     func tweetTableViewCellDidTapReply()
@@ -30,7 +31,6 @@ class TweetTableViewCell: UITableViewCell {
         imageView.clipsToBounds = true
         imageView.layer.masksToBounds = true
         imageView.layer.cornerRadius = 25
-        imageView.image = UIImage(systemName: "person")
         imageView.backgroundColor = .red
         
         return imageView
@@ -41,7 +41,6 @@ class TweetTableViewCell: UITableViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .systemFont(ofSize: 18, weight: .bold)
         label.textColor = .label
-        label.text = "Georgy Ganev"
         return label
     }()
     
@@ -51,7 +50,6 @@ class TweetTableViewCell: UITableViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .systemFont(ofSize: 16, weight: .regular)
         label.textColor = .secondaryLabel
-        label.text = "@Mechashef"
         return label
     }()
     
@@ -60,7 +58,6 @@ class TweetTableViewCell: UITableViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
         label.textColor = .label
-        label.text = "This is the content of my tweet that will illustrate how the actual text will line up within the cell. This is the content of my tweet that will illustrate how the actual text will line up within the cell"
         return label
     }()
     
@@ -199,6 +196,12 @@ class TweetTableViewCell: UITableViewCell {
         NSLayoutConstraint.activate(shareButtonConstraints)
     }
     
+    func configureTweetCell(username: String, displayName: String, tweetContent: String, avatarPath: String) {
+        usernameLabel.text = "@\(username)"
+        displayNameLabel.text = displayName
+        tweetTextContentLabel.text = tweetContent
+        avatarImageView.sd_setImage(with: URL(string: avatarPath))
+    }
     
 
 }
