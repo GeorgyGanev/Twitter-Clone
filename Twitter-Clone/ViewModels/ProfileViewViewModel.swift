@@ -36,7 +36,7 @@ final class ProfileViewViewModel: ObservableObject {
             currentFollowingState = .personal
             return
         }
-        DatabaseManager.shared.collectionsFollowings(follower: personalUserId, following: user.id)
+        DatabaseManager.shared.collectionsFollowings(checkFollower: personalUserId, following: user.id)
             .sink { completion in
                 if case .failure(let error) = completion {
                     print(error.localizedDescription)
@@ -48,6 +48,32 @@ final class ProfileViewViewModel: ObservableObject {
 
     }
     
+    func follow() {
+        guard let personalId = Auth.auth().currentUser?.uid else {return}
+        DatabaseManager.shared.collectionFollowings(follower: personalId , willFollow: user.id)
+            .sink { completion in
+                if case .failure(let error) = completion {
+                    print(error.localizedDescription)
+                }
+            } receiveValue: { [weak self] isFollowed in
+                self?.currentFollowingState = .userIsFollowed
+            }
+            .store(in: &subscriptions)
+
+    }
+    
+    func unfollow() {
+        guard let personalId = Auth.auth().currentUser?.uid else {return}
+        DatabaseManager.shared.collectionFollowings(delete: personalId, following: user.id)
+            .sink { completion in
+                if case .failure(let error) = completion {
+                    print(error.localizedDescription)
+                }
+            } receiveValue: { [weak self] isFollowed in
+                self?.currentFollowingState = .userIsNotFollowed
+            }
+            .store(in: &subscriptions)
+    }
 
     func getFormattedDate(with date: Date) -> String {
         let dateFormatter = DateFormatter()

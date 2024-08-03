@@ -77,14 +77,38 @@ class DatabaseManager {
             .eraseToAnyPublisher()
     }
     
-    func collectionsFollowings(follower: String, following: String) -> AnyPublisher<Bool, Error> {
+    func collectionsFollowings(checkFollower: String, following: String) -> AnyPublisher<Bool, Error> {
         db.collection(followingsPath)
-            .whereField("follower", isEqualTo: follower)
+            .whereField("follower", isEqualTo: checkFollower)
             .whereField("following", isEqualTo: following)
             .getDocuments()
             .map(\.count)
             .map {
                 $0 != 0
+            }
+            .eraseToAnyPublisher()
+    }
+    
+    func collectionFollowings(follower: String, willFollow: String) -> AnyPublisher<Bool, Error> {
+        db.collection(followingsPath).document().setData([
+            "follower": follower,
+            "following": willFollow
+        ])
+        .map({
+            true
+        })
+        .eraseToAnyPublisher()
+    }
+    
+    func collectionFollowings(delete follower: String, following: String) -> AnyPublisher<Bool, Error> {
+        db.collection(followingsPath)
+            .whereField("follower", isEqualTo: follower)
+            .whereField("following", isEqualTo: following)
+            .getDocuments()
+            .map(\.documents.first)
+            .map { query in
+                query?.reference.delete(completion: nil)
+                return true
             }
             .eraseToAnyPublisher()
     }
