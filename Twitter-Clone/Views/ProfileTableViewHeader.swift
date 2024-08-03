@@ -167,7 +167,7 @@ class ProfileTableViewHeader: UIView {
         return label
     }()
     
-    private let followButton: UIButton = {
+    let followButton: UIButton = {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = .twitterBlueColor
@@ -195,7 +195,6 @@ class ProfileTableViewHeader: UIView {
         addSubview(sectionStack)
         addSubview(followButton)
         addSubview(indicator)
-        
         configureConstraints()
         configureStackButton()
         
@@ -215,20 +214,28 @@ class ProfileTableViewHeader: UIView {
         }
     }
     
-    private func configureButtonAsUnfollow() {
+    func configureButtonAsUnfollow() {
         followButton.backgroundColor = .systemBackground
         followButton.setTitle("Unfollow", for: .normal)
         followButton.layer.borderWidth = 2
         followButton.layer.borderColor = UIColor.twitterBlueColor.cgColor
         followButton.setTitleColor(.twitterBlueColor, for: .normal)
+        followButton.isHidden = false
     }
     
-    private func configureButtonAsFollow() {
+    func configureButtonAsFollow() {
         followButton.setTitle("Follow", for: .normal)
         followButton.layer.borderColor = UIColor(.clear).cgColor
         followButton.backgroundColor = .twitterBlueColor
         followButton.setTitleColor(.white, for: .normal)
+        followButton.isHidden = false
     }
+    
+    func configureButtonAsPersonal() {
+        followButton.isHidden = true
+    }
+    
+    
     
     @objc private func didTapTab(_ sender: UIButton) {
         guard let label = sender.titleLabel?.text else {return}

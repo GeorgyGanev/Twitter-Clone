@@ -18,6 +18,7 @@ class DatabaseManager {
     let db = Firestore.firestore()
     let usersPath: String = "users"
     let tweetsPath: String = "tweets"
+    let followingsPath: String = "followings"
     
     func collectionUsers(add user: User) -> AnyPublisher<Bool, Error>{
         let twitterUser = TwitterUser(from: user)
@@ -72,6 +73,18 @@ class DatabaseManager {
                 try snapshots.map {
                    try $0.data(as: Tweet.self)
                 }
+            }
+            .eraseToAnyPublisher()
+    }
+    
+    func collectionsFollowings(follower: String, following: String) -> AnyPublisher<Bool, Error> {
+        db.collection(followingsPath)
+            .whereField("follower", isEqualTo: follower)
+            .whereField("following", isEqualTo: following)
+            .getDocuments()
+            .map(\.count)
+            .map {
+                $0 != 0
             }
             .eraseToAnyPublisher()
     }

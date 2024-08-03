@@ -9,16 +9,43 @@ import Foundation
 import Combine
 import FirebaseAuth
 
+enum ProfileFollowingState {
+    case userIsFollowed
+    case userIsNotFollowed
+    case personal
+}
+
 final class ProfileViewViewModel: ObservableObject {
     
     @Published var user: TwitterUser
     @Published var error: String?
     @Published var tweets: [Tweet] = []
+    @Published var currentFollowingState: ProfileFollowingState = .personal
     
     private var subscriptions: Set<AnyCancellable> = []
     
     init(user: TwitterUser) {
         self.user = user
+        checkIfFollowed()
+    }
+    
+    private func checkIfFollowed() {
+        guard let personalUserId = Auth.auth().currentUser?.uid,
+              personalUserId != user.id 
+        else {
+            currentFollowingState = .personal
+            return
+        }
+        DatabaseManager.shared.collectionsFollowings(follower: personalUserId, following: user.id)
+            .sink { completion in
+                if case .failure(let error) = completion {
+                    print(error.localizedDescription)
+                }
+            } receiveValue: { [weak self] isFollowed in
+                self?.currentFollowingState = isFollowed ? .userIsFollowed : .userIsNotFollowed
+            }
+            .store(in: &subscriptions)
+
     }
     
 
