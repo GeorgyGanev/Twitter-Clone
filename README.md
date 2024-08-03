@@ -18,6 +18,11 @@ Implement functionality to show the tweets of users that have been followed.
 The app uses FireBase as back end.
 To start and review this project, you need to create your own Firebase Project (i.e. Twitter-Clone iOS App), download your own GoogleService-info.plist file and copy the file into the project main directory in Xcode.
 
+In FireBase you need to enable the following options:
+1. Athentication with email and password
+2. Firestore Database
+3. Storage
+
 # App Screenshots
 <img width="157" alt="image" src="https://github.com/user-attachments/assets/e7a267fe-e4f4-42fa-8e63-07bf43625792">
 <img width="157" alt="image" src="https://github.com/user-attachments/assets/91364e1d-5f17-47aa-84f3-034017dde667">
